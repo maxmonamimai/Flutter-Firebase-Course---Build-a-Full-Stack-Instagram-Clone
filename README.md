@@ -10,3 +10,6 @@ Flutter learning 2022
 - import cloud_firestore
 - import firebase_auth
 - import firebase_storage
+- import flutter_svg
+- import image_picker
+- import provider
