@@ -10,3 +10,5 @@ Flutter learning 2022
 - import cloud_firestore
 - import firebase_auth
 - import firebase_storage
+- flutter_svg: ^1.1.2
+- image_picker: ^0.8.5+3
