@@ -12,3 +12,4 @@ Flutter learning 2022
 - import firebase_storage
 - import flutter_svg
 - import image_picker
+- import provider
