@@ -6,9 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instragrame_flutter/resources/auth_method.dart';
+import 'package:instragrame_flutter/screens/login_screen.dart';
 import 'package:instragrame_flutter/utils/colors.dart';
 import 'package:instragrame_flutter/utils/utils.dart';
 import 'package:instragrame_flutter/widgets/text_field_input.dart';
+
+import '../responsive/mobile_screen_layout.dart';
+import '../responsive/respnsive_layout_screen.dart';
+import '../responsive/webscreenlayout.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -23,6 +28,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -38,6 +44,40 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       _image = im as Uint8List?;
     });
+  }
+
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthMethod().signUpUser(
+        email: _emailController.text,
+        password: _passwordController.text,
+        username: _usernameController.text,
+        bio: _bioController.text,
+        file: _image!);
+
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const ResponsiveLayout(
+          webScreenLayout: WebscreenLayout(),
+          mobileScreenLayout: MobileScreenLayout(),
+        ),
+      ));
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void navigateToLogin() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => LoginScreen(),
+    ));
   }
 
   @override
@@ -120,18 +160,15 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             // button to login
             InkWell(
-              onTap: () async {
-                String res = await AuthMethod().signUpUser(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                    username: _usernameController.text,
-                    bio: _bioController.text,
-                    file: _image!
-                    );
-                print(res);
-              },
+              onTap: signUpUser,
               child: Container(
-                child: Text('Sign up'),
+                child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Sign up'),
                 width: double.infinity,
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 12),
@@ -156,17 +193,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   child: InkWell(
                     onTap: () {},
                     child: Container(
-                      child: Text("Don't have an account? "),
+                      child: Text("have an account? "),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: navigateToLogin,
                     child: Container(
                       child: Text(
-                        "Sign up",
+                        "Login",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
